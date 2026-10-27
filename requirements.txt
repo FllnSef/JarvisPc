@@ -1,0 +1,4 @@
+keyboard
+pyttsx3
+sounddevice
+vosk

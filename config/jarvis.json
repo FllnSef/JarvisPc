@@ -1,0 +1,91 @@
+{
+  "assistant": {
+    "hotkey": "ctrl+alt+j",
+    "exitHotkey": "ctrl+alt+q"
+  },
+  "voiceInput": {
+    "modelPath": "models/vosk-model-small-ru-0.22",
+    "device": null,
+    "sampleRate": 16000,
+    "timeoutSeconds": 10,
+    "fallbackToKeyboard": true
+  },
+  "voiceOutput": {
+    "preferredVoice": "Microsoft Pavel",
+    "rate": 165,
+    "volume": 1.0
+  },
+  "browser": "%ProgramFiles%\\Yandex\\YandexBrowser\\Application\\browser.exe",
+  "kinopoiskSearch": "https://www.kinopoisk.ru/index.php?kp_query={query}",
+  "applications": {
+    "discord": {
+      "name": "Discord",
+      "path": "%LOCALAPPDATA%\\Discord\\Update.exe",
+      "args": ["--processStart", "Discord.exe"],
+      "processes": ["Discord.exe"],
+      "aliases": ["дискорд", "discord"]
+    },
+    "radmin": {
+      "name": "Radmin VPN",
+      "path": "%ProgramFiles(x86)%\\Radmin VPN\\RvRvpnGui.exe",
+      "args": [],
+      "processes": ["RvRvpnGui.exe"],
+      "aliases": ["радмин", "радмин впн", "radmin vpn"],
+      "optional": true
+    },
+    "steam": {
+      "name": "Steam",
+      "path": "%ProgramFiles(x86)%\\Steam\\steam.exe",
+      "args": [],
+      "processes": ["steam.exe"],
+      "aliases": ["стим", "steam"]
+    },
+    "music": {
+      "name": "Яндекс Музыка",
+      "path": "%LOCALAPPDATA%\\Programs\\YandexMusic\\Яндекс Музыка.exe",
+      "args": [],
+      "processes": ["Яндекс Музыка.exe", "YandexMusic.exe"],
+      "aliases": ["яндекс музыка", "музыка", "яндекс мьюзик"]
+    },
+    "vscode": {
+      "name": "Visual Studio Code",
+      "path": "%LOCALAPPDATA%\\Programs\\Microsoft VS Code\\Code.exe",
+      "args": [],
+      "processes": ["Code.exe"],
+      "aliases": ["ви эс код", "вс код", "visual studio code"]
+    },
+    "chatgpt": {
+      "name": "ChatGPT",
+      "url": "https://chatgpt.com/",
+      "aliases": ["чат джи пи ти", "чатгпт", "chatgpt"]
+    },
+    "happ": {
+      "name": "Happ VPN",
+      "path": "%ProgramFiles%\\FlyFrogLLC\\Happ\\Happ.exe",
+      "args": [],
+      "processes": ["Happ.exe"],
+      "aliases": ["хапп", "хэпп", "happ", "впн"]
+    },
+    "telegram": {
+      "name": "Telegram",
+      "path": "%APPDATA%\\Telegram Desktop\\Telegram.exe",
+      "args": [],
+      "processes": ["Telegram.exe"],
+      "aliases": ["телеграм", "telegram", "телега"]
+    }
+  },
+  "modes": {
+    "gaming": {
+      "applications": ["discord", "radmin", "steam", "music"],
+      "confirmation": "Игровой режим включён. Приятной игры."
+    },
+    "work": {
+      "applications": ["vscode", "chatgpt", "happ", "telegram"],
+      "confirmation": "Рабочий режим включён. Можно приступать."
+    },
+    "leisure": {
+      "applications": [],
+      "confirmation": "Режим отдыха включён. Какой фильм найти?"
+    }
+  }
+}
