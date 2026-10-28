@@ -9,9 +9,9 @@ if (-not (Test-Path -LiteralPath $python)) {
 Push-Location $PSScriptRoot
 try {
     if ($Microphone) {
-        & $python .\run.py --mic $Microphone
+        & $python .\run_gui.py --mic $Microphone
     } else {
-        & $python .\run.py
+        & $python .\run_gui.py
     }
 } finally {
     Pop-Location

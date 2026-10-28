@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import queue
 import time
 from pathlib import Path
@@ -105,7 +106,7 @@ class VoskInput:
         self._model = Model(str(self.model_path))
         log("Модель распознавания готова.")
 
-    def listen(self) -> str:
+    def listen(self, level_callback=None) -> str:
         import sounddevice as sd
         from vosk import KaldiRecognizer
 
@@ -114,32 +115,47 @@ class VoskInput:
         def callback(data, _frames, _time, status) -> None:
             if status:
                 log(str(status), "WARN")
-            chunks.put(bytes(data))
+            raw = bytes(data)
+            chunks.put(raw)
+            if level_callback is not None:
+                try:
+                    samples = memoryview(raw).cast("h")
+                    step = max(1, len(samples) // 256)
+                    selected = samples[::step]
+                    rms = math.sqrt(sum(sample * sample for sample in selected) / max(1, len(selected)))
+                    level_callback(min(1.0, rms / 9000.0))
+                except Exception:
+                    level_callback(0.0)
 
         self.prepare()
         recognizer = KaldiRecognizer(self._model, self.rate)
         deadline = time.monotonic() + self.timeout
         partial = ""
-        with sd.RawInputStream(
-            device=self.device,
-            samplerate=self.rate,
-            blocksize=8000,
-            dtype="int16",
-            channels=1,
-            callback=callback,
-        ):
-            while time.monotonic() < deadline:
-                try:
-                    data = chunks.get(timeout=0.5)
-                except queue.Empty:
-                    continue
-                if recognizer.AcceptWaveform(data):
-                    text = json.loads(recognizer.Result()).get("text", "").strip()
-                    if text:
-                        return text
-                partial = json.loads(recognizer.PartialResult()).get("partial", "").strip()
-        final = json.loads(recognizer.FinalResult()).get("text", "").strip()
-        return final or partial
+        try:
+            with sd.RawInputStream(
+                device=self.device,
+                samplerate=self.rate,
+                # Smaller blocks keep the on-screen microphone wave responsive.
+                blocksize=1600,
+                dtype="int16",
+                channels=1,
+                callback=callback,
+            ):
+                while time.monotonic() < deadline:
+                    try:
+                        data = chunks.get(timeout=0.5)
+                    except queue.Empty:
+                        continue
+                    if recognizer.AcceptWaveform(data):
+                        text = json.loads(recognizer.Result()).get("text", "").strip()
+                        if text:
+                            return text
+                    partial = json.loads(recognizer.PartialResult()).get("partial", "").strip()
+            final = json.loads(recognizer.FinalResult()).get("text", "").strip()
+            return final or partial
+        finally:
+            if level_callback is not None:
+                level_callback(0.0)
 
 
 def create_input(config: dict[str, Any], root: Path):

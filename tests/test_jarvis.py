@@ -56,6 +56,18 @@ class JarvisTests(unittest.TestCase):
         self.assertFalse(result.success)
         self.assertEqual("movie", result.action)
 
+    def test_desktop_interface_assets_exist(self) -> None:
+        self.assertTrue((ROOT / "ui" / "Main.qml").is_file())
+        self.assertTrue((ROOT / "ui" / "assets" / "jarvis-robot.png").is_file())
+
+    def test_interface_contains_all_robot_states(self) -> None:
+        qml = (ROOT / "ui" / "Main.qml").read_text(encoding="utf-8")
+        for state in ("idle", "listening", "thinking", "executing", "success", "error"):
+            self.assertIn(f'"{state}"', qml)
+        self.assertIn("audioLevel", qml)
+        self.assertIn("settingsPage", qml)
+        self.assertIn("compactMode", qml)
+
 
 if __name__ == "__main__":
     unittest.main()

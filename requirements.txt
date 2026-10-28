@@ -1,4 +1,5 @@
 keyboard
+PySide6
 pyttsx3
 sounddevice
 vosk
